@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: registry
-  namespace: {{ include "base-helm-env.namespace" . }}
+  namespace: {{ .Values.baseValues.app.namespace }}
   labels:
     service: registry
 spec:

@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: registry
-  namespace: {{ include "base-helm-env.namespace" . }}
+  namespace: {{ .Values.baseValues.app.namespace }}
 spec:
   selector:
     matchLabels:

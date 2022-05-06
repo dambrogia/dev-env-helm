@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bastion
-  namespace: {{ include "base-helm-env.namespace" . }}
+  namespace: {{ .Values.baseValues.app.namespace }}
 spec:
   selector:
     matchLabels:
@@ -21,18 +21,18 @@ spec:
             - containerPort: 2222
           env:
             - name: PUBLIC_KEY
-              value: {{ .Values.baseValues.services.bastion.pubKey }}
+              value: {{ .Values.baseValues.services.bastion.pubKey | quote }}
             - name: USER_NAME
-              value: {{ .Values.baseValues.services.bastion.user }}
+              value: {{ .Values.baseValues.services.bastion.user | quote }}
             - name: PUID
-              value: {{ .Values.baseValues.services.bastion.uid }}
-          {{ if .Values.baseValues.app.environment -eq "dev" }}
+              value: {{ .Values.baseValues.services.bastion.uid | quote }}
+          {{ if eq .Values.baseValues.app.environment "dev" }}
           volumeMounts:
             - name: app-code-mount
               mountPath: /app-code-mount
           {{ end }}
 
-      {{ if .Values.baseValues.app.environment -eq "dev" }}
+      {{ if eq .Values.baseValues.app.environment "dev" }}
       volumes:
         - name: app-code-mount
           persistentVolumeClaim:

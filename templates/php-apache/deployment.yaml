@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: php-apache
-  namespace: {{ include "base-helm-env.namespace" . }}
+  namespace: {{ .Values.baseValues.app.namespace }}
 spec:
   selector:
     matchLabels:
@@ -20,22 +20,22 @@ spec:
           ports:
             - name: web
               containerPort: 80
-            {{ if .Values.baseValues.app.environment -eq "dev" }}
+            {{ if eq .Values.baseValues.app.environment "dev" }}
             - name: xdebug
               containerPort: 9003
             {{ end }}
           volumeMounts:
-            {{ if .Values.baseValues.app.environment -eq "dev" }}
-            - name: dev-code
+            {{ if eq .Values.baseValues.app.environment "dev" }}
+            - name: app-code
               mountPath: /var/www/html
             {{ else }}
             {}
             {{ end }}
       volumes:
-        {{ if .Values.baseValues.app.environment -eq "dev" }}
-        - name: dev-code
+        {{ if eq .Values.baseValues.app.environment "dev" }}
+        - name: app-code
           persistentVolumeClaim:
-            claimName: pvcc-dev-app-code
+            claimName: app-code-pvc
         {{ else }}
         {}
         {{ end }}

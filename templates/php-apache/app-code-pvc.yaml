@@ -1,14 +1,14 @@
-{{ if and (eq .Values.baseValues.include.phpApache true) (.Values.baseValues.app.environment "dev") }}
+{{ if and (eq .Values.baseValues.include.phpApache true) (eq .Values.baseValues.app.environment "dev") }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: app-code-pvc
-  namespace: {{ include "base-helm-env.namespace" . }}
+  namespace: {{ .Values.baseValues.app.namespace }}
 spec:
   storageClassName: "local-path"
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.baseValues.services.phpApache.appCodeStorage}}
+      storage: {{ .Values.baseValues.services.phpApache.appCodeStorage }}
 {{ end }}

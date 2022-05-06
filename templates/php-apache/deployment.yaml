@@ -1,0 +1,43 @@
+{{ if .Values.baseValues.include.phpApache }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-apache
+  namespace: {{ include "base-helm-env.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      deployment: php-apache
+  replicas: {{ .Values.baseValues.services.phpApache.replicas }}
+  template:
+    metadata:
+      labels:
+        deployment: php-apache
+    spec:
+      containers:
+        - name: php-apache
+          image: {{ .Values.baseValues.services.phpApache.image }}
+          ports:
+            - name: web
+              containerPort: 80
+            {{ if .Values.baseValues.app.environment -eq "dev" }}
+            - name: xdebug
+              containerPort: 9003
+            {{ end }}
+          volumeMounts:
+            {{ if .Values.baseValues.app.environment -eq "dev" }}
+            - name: dev-code
+              mountPath: /var/www/html
+            {{ else }}
+            {}
+            {{ end }}
+      volumes:
+        {{ if .Values.baseValues.app.environment -eq "dev" }}
+        - name: dev-code
+          persistentVolumeClaim:
+            claimName: pvcc-dev-app-code
+        {{ else }}
+        {}
+        {{ end }}
+
+{{ end }}

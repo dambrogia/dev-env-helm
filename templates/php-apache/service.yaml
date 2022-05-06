@@ -1,0 +1,35 @@
+{{ if .Values.baseValues.include.phpApache }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-apache
+  namespace: {{ include "base-helm-env.namespace" . }}
+  labels:
+    app-service: php-apache
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 30080
+    targetPort: 80
+    protocol: TCP
+  selector:
+    deployment: php-apache
+{{ if -eq .Values.baseValues.app.environment "dev" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-apache-xdebug
+  namespace: {{ include "base-helm-env.namespace" . }}
+  labels:
+    app-service: php-apache-xdebug
+spec:
+  type: ClusterIP
+  ports:
+  - port: 30903
+    targetPort: 9003
+    protocol: TCP
+  selector:
+    deployment: php-apache
+{{ end }} {{ /* end dev check for xdebug inclusion */ }}
+{{ end }} {{ /* end include for phpApache */ }}

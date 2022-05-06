@@ -1,0 +1,17 @@
+{{ if .Values.baseValues.include.bastion }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: bastion
+  namespace: {{ include "base-helm-env.namespace" . }}
+  labels:
+    service: bastion
+spec:
+  type: ClusterIP
+  ports:
+  - port: 30022
+    targetPort: 2222
+    protocol: TCP
+  selector:
+    deployment: bastion
+{{ end }}

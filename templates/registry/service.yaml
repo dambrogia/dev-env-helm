@@ -1,0 +1,17 @@
+{{ if .Values.baseValues.include.registry }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry
+  namespace: {{ include "base-helm-env.namespace" . }}
+  labels:
+    service: registry
+spec:
+  type: ClusterIP
+  ports:
+  - port: 30500
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    deployment: registry
+{{ end }}

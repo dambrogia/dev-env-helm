@@ -1,0 +1,4 @@
+.vscode/
+values.yaml
+values.*.yaml
+!values.example.yaml

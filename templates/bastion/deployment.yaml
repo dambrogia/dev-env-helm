@@ -1,0 +1,41 @@
+{{ if .Values.baseValues.include.bastion }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bastion
+  namespace: {{ include "base-helm-env.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      deployment: bastion
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        deployment: bastion
+    spec:
+      containers:
+        - name: bastion
+          image: {{ .Values.baseValues.services.bastion.image }}
+          ports:
+            - containerPort: 2222
+          env:
+            - name: PUBLIC_KEY
+              value: {{ .Values.baseValues.services.bastion.pubKey }}
+            - name: USER_NAME
+              value: {{ .Values.baseValues.services.bastion.user }}
+            - name: PUID
+              value: {{ .Values.baseValues.services.bastion.uid }}
+          {{ if .Values.baseValues.app.environment -eq "dev" }}
+          volumeMounts:
+            - name: app-code-mount
+              mountPath: /app-code-mount
+          {{ end }}
+
+      {{ if .Values.baseValues.app.environment -eq "dev" }}
+      volumes:
+        - name: app-code-mount
+          persistentVolumeClaim:
+            claimName: app-code-pvc
+      {{ end }}
+{{ end }}

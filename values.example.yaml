@@ -1,0 +1,25 @@
+baseValues:
+  app:
+    namespace: base-helm-env-dev
+    environment: dev # dev | staging | prod
+
+  include:
+    bastion: true
+    phpApache: true
+    registry: true
+
+  services:
+    bastion:
+      image: linuxserver/openssh-server:version-8.8_p1-r1
+      user: www-data
+      uid: "33" # matches php-apache user
+      pubKey: <your_pub_key>
+
+    registry:
+      image: registry:2.8.0
+
+    phpApache:
+      image: php:8.0.2-apache-buster
+      replicas: 1
+      # only used when .Values.baseValues.app.environment == dev
+      appCodeStorage: 5G

@@ -1,0 +1,22 @@
+{{ if .Values.baseValues.include.registry }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  namespace: {{ include "base-helm-env.namespace" . }}
+spec:
+  selector:
+    matchLabels:
+      deployment: registry
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        deployment: registry
+    spec:
+      containers:
+        - name: registry
+          image: {{ .Values.baseValues.services.registry.image }}
+          ports:
+            - containerPort: 5000
+{{ end }}
